@@ -21,20 +21,45 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.Surface
+import androidx.compose.runtime.Composable
 import com.codelabs.state.ui.StateCodelabTheme
 
 class TodoActivity : AppCompatActivity() {
 
-    val todoViewModel by viewModels<TodoViewModel>()
+    private val todoViewModel by viewModels<TodoViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             StateCodelabTheme {
                 Surface {
-                    // TODO: build the screen in compose
+                    TodoActivityScreen(todoViewModel)
                 }
             }
         }
     }
+}
+
+/**
+ * ViewModel과 Activity를 이어주는 역할을 하는 composable
+ * */
+@Composable
+private fun TodoActivityScreen(todoViewModel: TodoViewModel) {
+//    val items: List<TodoItem> by todoViewModel.todoItems.observeAsState(listOf()) // observeAsState() 덕에 LiveData를 관찰하고 현재 state를 직접적으로 사용할 수 있다.
+    // 단방향 데이터로 event를 위로 보내기
+//    TodoScreen(
+//        items = items,
+//        onAddItem = { todoViewModel.addItem(it) },
+//        onRemoveItem = { todoViewModel.removeItem(it) }
+//    )
+
+    TodoScreen(
+        items = todoViewModel.todoItems,
+        currentlyEditing = todoViewModel.currentEditItem,
+        onAddItem = todoViewModel::addItem,
+        onRemoveItem = todoViewModel::removeItem,
+        onStartEdit = todoViewModel::onEditItemSelected,
+        onEditItemChange = todoViewModel::onEditItemChange,
+        onEditDone = todoViewModel::onEditDone
+    )
 }

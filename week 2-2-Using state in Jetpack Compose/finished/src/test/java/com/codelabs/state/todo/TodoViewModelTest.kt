@@ -31,13 +31,15 @@ class TodoViewModelTest {
     }
 
     @Test
-    fun whenRemovingItem_updatesList() {
+    fun whenRemovingItem_updatesList() { // Test에 대한 이해도가 부족한 상태..
         val subject = TodoViewModel()
         val item1 = generateRandomTodoItem()
         val item2 = generateRandomTodoItem()
         subject.addItem(item1)
         subject.addItem(item2)
+
         subject.removeItem(item1)
+
         assertThat(subject.todoItems).isEqualTo(listOf(item2))
     }
 
