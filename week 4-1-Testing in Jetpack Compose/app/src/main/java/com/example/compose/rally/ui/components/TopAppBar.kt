@@ -46,6 +46,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.compose.rally.RallyScreen
+import com.example.compose.rally.ui.theme.RallyTheme
 import java.util.Locale
 
 @Composable
@@ -54,19 +55,21 @@ fun RallyTopAppBar(
     onTabSelected: (RallyScreen) -> Unit,
     currentScreen: RallyScreen
 ) {
-    Surface(
-        Modifier
-            .height(TabHeight)
-            .fillMaxWidth()
-    ) {
-        Row(Modifier.selectableGroup()) {
-            allScreens.forEach { screen ->
-                RallyTab(
-                    text = screen.name,
-                    icon = screen.icon,
-                    onSelected = { onTabSelected(screen) },
-                    selected = currentScreen == screen
-                )
+    RallyTheme {
+        Surface(
+            Modifier
+                .height(TabHeight)
+                .fillMaxWidth()
+        ) {
+            Row(Modifier.selectableGroup()) {
+                allScreens.forEach { screen ->
+                    RallyTab(
+                        text = screen.name,
+                        icon = screen.icon,
+                        onSelected = { onTabSelected(screen) },
+                        selected = currentScreen == screen
+                    )
+                }
             }
         }
     }

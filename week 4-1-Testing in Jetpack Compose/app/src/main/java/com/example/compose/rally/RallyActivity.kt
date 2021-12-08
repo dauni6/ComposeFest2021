@@ -39,27 +39,32 @@ class RallyActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            RallyApp()
+            var currentScreen by rememberSaveable { mutableStateOf(RallyScreen.Overview) }
+            RallyApp(currentScreen) { screen ->
+                currentScreen = screen
+            }
         }
     }
 }
 
+// 테스트하기 위해 RallyApp이 가지고 있는 상태가 필요하다. 상태 = 데이터/상태
 @Composable
-fun RallyApp() {
+fun RallyApp(currentScreen:RallyScreen, onTabSelected: (RallyScreen) -> Unit) {
     RallyTheme {
         val allScreens = RallyScreen.values().toList()
-        var currentScreen by rememberSaveable { mutableStateOf(RallyScreen.Overview) }
+//        var currentScreen by rememberSaveable { mutableStateOf(RallyScreen.Overview) } // 현재 탭의 상태 = 현재 스크린
+        // testable 하도록 하기위하여 state를 hoisting 하기
         Scaffold(
             topBar = {
                 RallyTopAppBar(
                     allScreens = allScreens,
-                    onTabSelected = { screen -> currentScreen = screen },
+                    onTabSelected = onTabSelected,
                     currentScreen = currentScreen
                 )
             }
         ) { innerPadding ->
             Box(Modifier.padding(innerPadding)) {
-                currentScreen.content(onScreenChange = { screen -> currentScreen = screen })
+                currentScreen.content(onScreenChange = onTabSelected)
             }
         }
     }
