@@ -21,6 +21,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.material.MaterialTheme
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.app.ShareCompat
 import androidx.core.widget.NestedScrollView
@@ -29,6 +31,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
+import com.google.android.material.composethemeadapter.MdcTheme
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.samples.apps.sunflower.R
@@ -105,6 +108,22 @@ class PlantDetailFragment : Fragment() {
                     }
                     else -> false
                 }
+            }
+
+            composeView.apply {
+                // 기본적으로 컴포즈뷰는 윈도우에서 detached 될때마다 composition을 삭제해버린다
+                // 이런 경우는 ComposeView가 프래그먼트내부에서 사용될때 바람직하지 않다.
+                // 이를 개선하기 위하여 ViewCompositionStrategy가 존재한다. 상황에 맞게 Strategy를 구성하면 된다. 자세한건 공식문서 참고
+                setViewCompositionStrategy(
+                    ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed // 라이프사이클 오너를 알 수 없는 경우에 사용하는 전략이다. 이는 현재 윈도우에 붙여져있는 뷰가 destory될때 같이 삭제하는 전략이다.
+                )
+                setContent { // compose 추가하기
+                    // Sunflower앱이 머테리얼 디자인을 따르므로 MaterialTheme 안에 컴포저블을 호출해야함
+                    MdcTheme  {
+                        PlantDetailDescription(plantDetailViewModel)
+                    }
+                }
+
             }
         }
         setHasOptionsMenu(true)
